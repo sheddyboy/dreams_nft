@@ -11,9 +11,9 @@ type UserPageLayoutProps = {
 const UserPageLayout = ({ children }: UserPageLayoutProps) => {
   return (
     <div className="flex flex-col gap-[25px] max-md:gap-0">
-      <div className="bg-nav-gradient flex aspect-[1280/202] bg-cover bg-center max-md:aspect-[390/202]">
+      <div className="flex aspect-[1280/202] bg-nav-gradient bg-cover bg-center max-md:aspect-auto">
         <div className="container mx-auto flex flex-col px-[20px]">
-          <nav className="mb-[52px] flex flex-wrap items-center justify-between pt-[26px] max-sm:mb-7 max-sm:justify-center max-sm:gap-2 max-sm:pt-5">
+          <nav className="mb-[52px] flex flex-wrap items-center justify-between pt-[26px] max-sm:mb-10 max-sm:justify-center max-sm:gap-2 max-sm:pt-5">
             <Link
               className="font-leckerliOne text-[26px] leading-[35px] text-white underline"
               href={"/"}
