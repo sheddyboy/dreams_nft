@@ -1,7 +1,30 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Leckerli_One, Lato, Outfit } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
+import ReactQueryProvider from "@/Providers/ReactQueryProvider";
+import WagmiProvider from "@/Providers/WagmiProvider";
 
+const clashGrotesk = localFont({
+  src: "./fonts/ClashGrotesk.ttf",
+  variable: "--clashGrotesk",
+});
+const lato = Lato({
+  weight: ["100", "300", "400", "700", "900"],
+  variable: "--lato",
+  subsets: ["latin"],
+});
+const outfit = Outfit({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--outfit",
+  subsets: ["latin"],
+});
+const leckerliOne = Leckerli_One({
+  weight: "400",
+  variable: "--leckerliOne",
+  subsets: ["latin"],
+});
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -26,9 +49,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${outfit.variable} ${clashGrotesk.variable} ${lato.variable} ${leckerliOne.variable} ${geistMono.variable} font-clashGrotesk antialiased`}
       >
-        {children}
+        <WagmiProvider>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+        </WagmiProvider>
+        <Toaster richColors />
       </body>
     </html>
   );
