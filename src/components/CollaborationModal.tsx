@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/dialog";
 import { useRef, useState } from "react";
 import Image from "next/image";
+import { PinataSDK } from "pinata-web3";
+import { IPFSData } from "../new-types";
 type CollaborationModalProps = {
   modal: boolean;
   setModal: (open: boolean) => void;
@@ -48,7 +50,10 @@ const formSchema = z.object({
     .string()
     .min(1, "Second collaborator address is required"),
 });
-
+const pinata = new PinataSDK({
+  pinataJwt: process.env.PINATA_JWT!,
+  pinataGateway: process.env.NEXT_PUBLIC_GATEWAY_URL,
+});
 const CollaborationModal = ({ modal, setModal }: CollaborationModalProps) => {
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -67,6 +72,19 @@ const CollaborationModal = ({ modal, setModal }: CollaborationModalProps) => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
   }
+
+const uploadFileToPinata = async (file: File): Promise<string> => {
+   const content = new Blob([await file.arrayBuffer()], { type: file.type });
+   const fileName = `${Date.now()}-${file.name}`;
+   const fileToUpload = new File([content], fileName, { type: file.type });
+    const upload = await pinata.upload.file(fileToUpload);
+    return upload.IpfsHash;
+};
+
+const uploadMetaDataToPinata = async (data:IPFSData) : Promise<string>=>{
+  const upload = await pinata.upload.json(data);
+  return upload.IpfsHash;
+}
   return (
     <Dialog open={modal} onOpenChange={setModal}>
       <DialogContent className="flex flex-col gap-0 rounded-[15px] px-[26px] pb-[50px] pt-[12px]">

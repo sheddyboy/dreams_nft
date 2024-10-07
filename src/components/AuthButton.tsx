@@ -1,7 +1,7 @@
 "use client";
 import { useConnect, useAccount, useDisconnect } from "wagmi";
 import { injected } from "wagmi/connectors";
-import { sepolia } from "viem/chains";
+import { sepolia,baseSepolia } from "viem/chains";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -54,7 +54,7 @@ const AuthButton = () => {
           onClick={async () => {
             try {
               await connectAsync({
-                chainId: sepolia.id,
+                chainId: baseSepolia.id,
                 connector: injected(),
               });
               return toast.success(`Logged In`);
