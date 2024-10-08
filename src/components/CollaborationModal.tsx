@@ -19,7 +19,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { PinataSDK } from "pinata-web3";
 import { IPFSData } from "../new-types";
@@ -68,6 +68,15 @@ const CollaborationModal = ({ modal, setModal }: CollaborationModalProps) => {
       secondCollaborator: "",
     },
   });
+useEffect( () => {
+ const get = async () =>{
+  console.log("got here");
+   const data = await pinata.gateways.get("QmQi6e5YnEbvbUzSnUm4Kb6XjXUfrnYcRmMZcrNtwpepXR");
+   console.log(data);
+   
+ }
+   get();
+}, [])
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -77,8 +86,8 @@ const uploadFileToPinata = async (file: File): Promise<string> => {
    const content = new Blob([await file.arrayBuffer()], { type: file.type });
    const fileName = `${Date.now()}-${file.name}`;
    const fileToUpload = new File([content], fileName, { type: file.type });
-    const upload = await pinata.upload.file(fileToUpload);
-    return upload.IpfsHash;
+   const upload = await pinata.upload.file(fileToUpload);
+   return upload.IpfsHash;
 };
 
 const uploadMetaDataToPinata = async (data:IPFSData) : Promise<string>=>{
