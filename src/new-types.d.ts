@@ -11,9 +11,4 @@ export interface NFTMetadata {
   name: string;
   description: string;
   image: string;
-  collaborators: string[];
-  attributes: {
-    trait_type: string;
-    value: number;
-  }[];
 }

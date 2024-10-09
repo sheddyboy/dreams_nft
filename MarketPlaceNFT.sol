@@ -13,9 +13,10 @@ contract CollaborativeNFTMarketplace is ERC1155, ERC1155Holder, ERC1155Receiver 
         uint256 tokenId;
         address creator;
         uint256 price;
-        uint256 availableSupply;
         bool isListed;
         uint256 createdAt;
+        string pinataUrl;
+        string metadataCID;
     }
 
     // Mapping to store creator addresses and their shares
@@ -52,9 +53,11 @@ contract CollaborativeNFTMarketplace is ERC1155, ERC1155Holder, ERC1155Receiver 
     function createNFT(
         uint256 amount,
         uint256 price,
+        string memory pinataUrl,
+        string memory metadataCID,
         address[] memory creatorAddresses, 
         uint256[] memory shares
-    ) public {
+    ) external {
         uint256 tokenId = getTokenCounter() + 1;
         require(creatorAddresses.length > 0, "At least one creator is required");
         require(creatorAddresses.length == shares.length, "Mismatched creator and share arrays");
@@ -69,9 +72,10 @@ contract CollaborativeNFTMarketplace is ERC1155, ERC1155Holder, ERC1155Receiver 
             tokenId: tokenId,
             creator: msg.sender,
             price: price,
-            availableSupply: amount,
             isListed: true,
-            createdAt: block.timestamp
+            createdAt: block.timestamp,
+            pinataUrl:pinataUrl,
+            metadataCID:metadataCID
         });
 
         // Store creators
@@ -82,18 +86,18 @@ contract CollaborativeNFTMarketplace is ERC1155, ERC1155Holder, ERC1155Receiver 
         _allTokenIds.push(tokenId);
         
         emit NFTCreated(tokenId, msg.sender, price, amount);
+        // Increment token counter for next token ID (it's 1-indexed, so we need to add 1 to the count)
+        tokenCounter += 1;
     }
 
     // Function for users to mint additional tokens of an existing NFT
-    function mintToken(uint256 tokenId, uint256 amount) public payable {
+    function mintToken(uint256 tokenId, uint256 amount) external payable {
         NFTDetails storage details = nftDetails[tokenId];
         require(details.createdAt > 0, "NFT does not exist");
         require(details.isListed, "NFT is not listed for sale");
         require(msg.value >= details.price * amount, "Insufficient funds");
-        //require(amount <= details.availableSupply, "Insufficient supply");
-
+       
         _mint(msg.sender, tokenId, amount, "");
-        details.availableSupply -= amount;
 
         // Distribute revenue among creators
         uint256 totalRevenue = msg.value;
@@ -116,7 +120,7 @@ contract CollaborativeNFTMarketplace is ERC1155, ERC1155Holder, ERC1155Receiver 
     }
 
     // Function to update NFT price
-    function updateNFTPrice(uint256 tokenId, uint256 newPrice) public {
+    function updateNFTPrice(uint256 tokenId, uint256 newPrice) external {
         require(nftDetails[tokenId].creator == msg.sender, "Not the creator");
         nftDetails[tokenId].price = newPrice;
         emit NFTPriceUpdated(tokenId, newPrice);
@@ -150,7 +154,7 @@ contract CollaborativeNFTMarketplace is ERC1155, ERC1155Holder, ERC1155Receiver 
         return listedNFTs;
     }
 
-    function getNFTsByCreator(address creator) public view returns (NFTDetails[] memory) {
+    function getNFTsByCreator(address creator) external view returns (NFTDetails[] memory) {
         uint256 creatorNFTCount = 0;
         for (uint256 i = 0; i < _allTokenIds.length; i++) {
             if (nftDetails[_allTokenIds[i]].creator == creator) {
@@ -171,7 +175,9 @@ contract CollaborativeNFTMarketplace is ERC1155, ERC1155Holder, ERC1155Receiver 
 
     // Override uri function to return the correct metadata URI
     function uri(uint256 tokenId) public view virtual override returns (string memory) {
-        return string(abi.encodePacked(_baseUri, _uint2str(tokenId), ".json"));
+        string memory cid = nftDetails[tokenId].metadataCID;
+        return string(abi.encodePacked(_baseUri, cid, ".json"));
+
     }
 
     // Function to update the base URI (only contract owner should be able to call this)

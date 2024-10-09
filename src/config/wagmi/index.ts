@@ -6,7 +6,9 @@ const config = createConfig({
   chains: [baseSepolia],
   connectors: [injected()],
   transports: {
-    [baseSepolia.id]: http(),
+    [baseSepolia.id]: http(
+      `https://base-sepolia.g.alchemy.com/v2/rEYE-8dcbVFNNd5dlyvS1tLywyh-fOGf`
+    ),
   },
   ssr: true,
 });
