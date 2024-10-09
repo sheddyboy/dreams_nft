@@ -62,7 +62,8 @@ const formSchema = z.object({
     .min(1, "Second collaborator address is required"),
 });
 const pinata = new PinataSDK({
-  pinataJwt: process.env.PINATA_JWT,//This does not display when deploying please directly use the JWT from the env file
+  pinataJwt:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjNTgwNjAwNi0xN2FiLTQ3ZTUtYjAzNy0wMWNiZTFhYWQwMGMiLCJlbWFpbCI6ImVyb25vYWlrQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIwZjVjMzAzZGQ3MDcyZGZhMzVjOCIsInNjb3BlZEtleVNlY3JldCI6IjM4MTRjMTk1NzM5M2EwNjczN2MyOTkzMDgwYTk1MDkwYmZlMjM1NGU3NjM5YjVkODg1NTU0NGY0YjFjYjIxNDIiLCJleHAiOjE3NTk5OTE3NzV9.HiYvHQcSDgKXFmuOZ-qimDcIysI6i_WOQczuy1EQrn4", //This does not display when deploying please directly use the JWT from the env file
   pinataGateway: process.env.NEXT_PUBLIC_GATEWAY_URL,
 });
 const CollaborationModal = ({ modal, setModal }: CollaborationModalProps) => {

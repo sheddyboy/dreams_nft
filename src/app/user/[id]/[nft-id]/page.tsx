@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-
+import {useAccount,useWriteContract,useReadContract} from 'wagmi'
+import {
+  contractAddress,
+  contractAbi,
+} from "@/abi/CollaborativeNFTMarketplace";
 const NftItemPage = () => {
   return (
     <div className="flex flex-col gap-2">
