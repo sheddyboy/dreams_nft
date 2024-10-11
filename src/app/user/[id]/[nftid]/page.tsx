@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {useParams} from 'next/navigation'
 import Image from "next/image";
 import { createPublicClient, http, parseAbi } from "viem";
 import { baseSepolia } from "viem/chains";
@@ -18,7 +19,9 @@ import {
 } from "wagmi";
 import { toast } from "sonner";
 const NftItemPage = () => {
+  const params = useParams();
   const [nftData, setNftData] = useState(null);
+  const [tokenId, settokenId] = useState("")
   const [imageUrl, setImageUrl] = useState("");
   const [price, setPrice] = useState("");
   const [meta, setMeta] = useState("");
@@ -28,6 +31,9 @@ const NftItemPage = () => {
        hash,
      });
   useEffect(() => {
+    const id = params.nftid;
+    settokenId(id as string);
+    
     const fetchNFTData = async () => {
       const client = createPublicClient({
         chain: baseSepolia,
@@ -41,7 +47,7 @@ const NftItemPage = () => {
           address: contractAddress,
           abi: contractAbi,
           functionName: "nftDetails",
-          args: [BigInt(1)],
+          args: [BigInt(id as string)],
         });
         console.log(data);
         
@@ -65,7 +71,6 @@ const NftItemPage = () => {
     fetchNFTData();
   }, []);
    async function Buy() {
-     console.log("Submitted");
        await writeContract({
          address: contractAddress,
          abi: contractAbi,

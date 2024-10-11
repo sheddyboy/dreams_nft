@@ -1,3 +1,4 @@
+"use client"
 import {
   contractAbi,
   contractAddress,
@@ -8,7 +9,7 @@ import { useReadContract, useAccount } from "wagmi";
 type UserPageProps = {};
 
 const UserPage = ({}: UserPageProps) => {
-  const { isConnected, address } = useAccount();
+    const { isConnected, address } = useAccount();
   const result = useReadContract({
     abi: contractAbi,
     address: contractAddress,
@@ -16,6 +17,7 @@ const UserPage = ({}: UserPageProps) => {
     args: [address as Address],
   });
   console.log(result?.data);
+   
   return (
     <div className="flex flex-col gap-[26px] max-md:gap-3.5">
       <span className="text-[18px] font-medium leading-[22px] text-[#212020]">
