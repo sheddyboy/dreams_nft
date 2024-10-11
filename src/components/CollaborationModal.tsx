@@ -22,7 +22,7 @@ import {
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { PinataSDK } from "pinata-web3";
-import { IPFSData,NFTMetadata } from "../new-types";
+import { NFTMetadata } from "../new-types";
 import {
   useWaitForTransactionReceipt,
   useWriteContract,

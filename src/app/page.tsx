@@ -19,8 +19,10 @@ export default function Home() {
     functionName: "getListedNFTs",
     args: [],
   });
-
+ console.log(result?.data);
+ 
   return (
+    
     <div className="container mx-auto max-w-[851px] px-[20px]">
       <nav className="mb-[52px] flex flex-wrap items-center justify-between pt-[48px] max-sm:mb-7 max-sm:justify-center max-sm:gap-2 max-sm:pt-5">
         <Link
@@ -52,6 +54,7 @@ export default function Home() {
               price={item.price.toString()}
               creator={item.creator}
               metaDataCid={item.metadataCID}
+              tokenId={Number(item.tokenId)}
             />
           ))}
         </div>

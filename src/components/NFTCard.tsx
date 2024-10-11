@@ -8,26 +8,19 @@ import Link from "next/link";
 import { formatEther } from "ethers";
 import { pinata } from "../config/pinata/config";
 import { useEffect, useState } from "react";
-type NFTCardProps = {
-  creator: string; // Ethereum address format (hexadecimal) // IPFS Content identifier (CID)
-  pinataUrl: string; // Full URL for accessing metadata on Pinata
-  price: string; // Assuming price in Wei (1 Wei = 10^-18 ETH)
-  metaDataCid: string;
-};
+import {NFTCardProps} from '../new-types'
 
-const NFTCard = ({ creator, pinataUrl, price, metaDataCid }: NFTCardProps) => {
+const NFTCard = ({ creator, pinataUrl, price, metaDataCid,tokenId }: NFTCardProps) => {
   const [desc, setDesc] = useState("")
   const [imageUrl, setImageUrl] = useState("")
   useEffect(() => {
     const get = async () => {
-      console.log("got here");
       const data = await pinata.gateways.get(metaDataCid);
       setDesc(data.data.description);
       setImageUrl(data.data.image);
     };
     get();
   }, []);
- console.log(imageUrl);
   return (
     <Card className="flex-1">
       <CardContent className="relative flex aspect-[203/225] flex-col justify-between overflow-hidden rounded-[8px] p-0 max-md:aspect-[351/263]">
@@ -38,7 +31,7 @@ const NFTCard = ({ creator, pinataUrl, price, metaDataCid }: NFTCardProps) => {
           className="ob object-cover object-center"
         />
         <div className="relative flex justify-end p-2">
-          <Link href={"/user/0xc/wqe"}>
+          <Link href={`/user/0xc/${tokenId}`}>
             <Button className="h-auto gap-1 rounded-[15px] bg-[#2F2F2F] px-[8px] py-[4px] font-lato font-bold">
               <Image
                 alt="cartIcon"
