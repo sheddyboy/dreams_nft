@@ -1,11 +1,11 @@
 "use client";
 import { useConnect, useAccount, useDisconnect } from "wagmi";
 import { injected } from "wagmi/connectors";
-import { sepolia } from "viem/chains";
+import { sepolia,baseSepolia } from "viem/chains";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import Link from "next/link";
 const AuthButton = () => {
   const { connectAsync } = useConnect();
   const { disconnectAsync } = useDisconnect();
@@ -15,9 +15,11 @@ const AuthButton = () => {
       {isConnected ? (
         <div className="flex items-center gap-3 rounded-[34px] bg-white p-[4.5px]">
           <div className="flex flex-1 items-stretch gap-[20px] overflow-hidden">
-            <Avatar className="font-outfit ml-[10px] h-[28px] w-[28px]">
+            <Avatar className="ml-[10px] h-[28px] w-[28px] font-outfit">
               <AvatarImage />
-              <AvatarFallback>🐶</AvatarFallback>
+              <Link href={`/user/1`}>
+                <AvatarFallback>🐶</AvatarFallback>
+              </Link>
             </Avatar>
             <div className="my-[2px] w-[1px] bg-[#040404]/40"></div>
             <div className="flex items-center">
@@ -54,7 +56,7 @@ const AuthButton = () => {
           onClick={async () => {
             try {
               await connectAsync({
-                chainId: sepolia.id,
+                chainId: baseSepolia.id,
                 connector: injected(),
               });
               return toast.success(`Logged In`);

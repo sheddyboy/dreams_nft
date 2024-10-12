@@ -1,23 +1,37 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import { formatEther } from "ethers";
+import { pinata } from "../config/pinata/config";
+import { useEffect, useState } from "react";
+import {NFTCardProps} from '../new-types'
 
-type NFTCardProps = {};
-
-const NFTCard = ({}: NFTCardProps) => {
+const NFTCard = ({ creator,price, metaDataCid,tokenId }: NFTCardProps) => {
+  const [desc, setDesc] = useState("")
+  const [imageUrl, setImageUrl] = useState("")
+  useEffect(() => {
+    const get = async () => {
+      const data = await pinata.gateways.get(metaDataCid) as any;
+      setDesc(data?.data?.description);
+      setImageUrl(data.data.image);
+    };
+    get();
+  }, []);
   return (
     <Card className="flex-1">
       <CardContent className="relative flex aspect-[203/225] flex-col justify-between overflow-hidden rounded-[8px] p-0 max-md:aspect-[351/263]">
         <Image
           alt="ntf_image"
-          src={"/dummy_images/nft_image.jpeg"}
+          src={`${imageUrl}`}
           fill
           className="ob object-cover object-center"
         />
         <div className="relative flex justify-end p-2">
-          <Link href={"/user/0xc/wqe"}>
+          <Link href={`/user/0xc/${tokenId}`}>
             <Button className="h-auto gap-1 rounded-[15px] bg-[#2F2F2F] px-[8px] py-[4px] font-lato font-bold">
               <Image
                 alt="cartIcon"
@@ -37,15 +51,15 @@ const NFTCard = ({}: NFTCardProps) => {
                 <AvatarFallback>A</AvatarFallback>
               </Avatar>
               <span className="flex-1 truncate text-[14px] font-normal leading-[17px]">
-                xeddhdueraasaddadad0908asa08sa0s
+                {creator}
               </span>
             </div>
           </Link>
           <p className="font-lato text-[12px] font-bold leading-[14px]">
-            0.005 ETH
+            {formatEther(price)}
           </p>
           <p className="text-[12px] leading-[15px]">
-            Let’s the make out the best projects of the mons{" "}
+            {desc}{" "}
           </p>
         </div>
       </CardContent>

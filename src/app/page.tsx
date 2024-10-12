@@ -4,13 +4,25 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
 import CollaborationModal from "@/components/CollaborationModal";
-
+import { useReadContract } from "wagmi";
 import AuthButton from "@/components/AuthButton";
+import {
+  contractAddress,
+  contractAbi,
+} from "@/abi/CollaborativeNFTMarketplace";
 
 export default function Home() {
   const [modal, setModal] = useState(false);
-
+  const result = useReadContract({
+    abi: contractAbi,
+    address: contractAddress,
+    functionName: "getListedNFTs",
+    args: [],
+  });
+ console.log(result?.data);
+ 
   return (
+    
     <div className="container mx-auto max-w-[851px] px-[20px]">
       <nav className="mb-[52px] flex flex-wrap items-center justify-between pt-[48px] max-sm:mb-7 max-sm:justify-center max-sm:gap-2 max-sm:pt-5">
         <Link
@@ -36,11 +48,16 @@ export default function Home() {
           </Button>
         </div>
         <div className="grid grid-cols-4 gap-x-[13px] gap-y-[28px] max-md:grid-cols-2 max-sm:grid-cols-1 max-sm:gap-y-4">
-          <NFTCard />
-          <NFTCard />
-          <NFTCard />
-          <NFTCard />
-          <NFTCard />
+          {result?.data?.map((item, index) => (
+            <NFTCard
+               key={index}
+              pinataUrl={item.pinataUrl}
+              price={item.price.toString()}
+              creator={item.creator}
+              metaDataCid={item.metadataCID}
+              tokenId={Number(item.tokenId)}
+            />
+          ))}
         </div>
       </main>
       <CollaborationModal modal={modal} setModal={setModal} />

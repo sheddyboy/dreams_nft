@@ -19,8 +19,21 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import { PinataSDK } from "pinata-web3";
+import { NFTMetadata } from "../new-types";
+import {
+  useWaitForTransactionReceipt,
+  useWriteContract,
+  useAccount,
+  useReadContract,
+  //useTransactionReceipt,
+} from "wagmi";
+import {contractAbi,contractAddress} from "../abi/CollaborativeNFTMarketplace"
+import { Address } from "viem";
+import { toast } from "sonner";
+import {parseUnits} from 'ethers'
 type CollaborationModalProps = {
   modal: boolean;
   setModal: (open: boolean) => void;
@@ -48,10 +61,19 @@ const formSchema = z.object({
     .string()
     .min(1, "Second collaborator address is required"),
 });
-
+const pinata = new PinataSDK({
+  pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT,
+  pinataGateway: process.env.NEXT_PUBLIC_GATEWAY_URL,
+});
 const CollaborationModal = ({ modal, setModal }: CollaborationModalProps) => {
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const {isConnected,address} = useAccount();
+  const { writeContract, data: hash } = useWriteContract();
+   const { isLoading: isTransactionLoading, isSuccess: isTransactionSuccess } =
+     useWaitForTransactionReceipt({
+       hash,
+     });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,9 +86,64 @@ const CollaborationModal = ({ modal, setModal }: CollaborationModalProps) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+
+//check for transaction success
+  useEffect(() => {
+    if (isTransactionLoading) {
+      toast.success(`Minting In Progress`);
+    }
+    if (isTransactionSuccess) {
+      toast.success(`Minted Successfully`);
+    }
+  }, [isTransactionLoading, isTransactionSuccess]);
+  
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!isConnected) {
+      toast.error("Please connect your wallet")
+      throw new Error("Wallet is not connected!");
+    }
+    try {
+      const IpfsHash = await uploadFileToPinata(file);
+      toast("File is being uploaded")
+      //const IpfsHash = "QmWBFKSEqasLWa2ackDBFPuN8Xtj1B7zobBv9q762Z9n2X";
+      const metadata: NFTMetadata = {
+        name: values.title,
+        description: values.description,
+        image: `https://${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${IpfsHash}`,
+      };
+     
+      const metaUpload = await uploadMetaDataToPinata(metadata);
+      //const metaUpload = "QmbtUcWosm7Q4b5DQtcEDE5YCHQLC6WkmPjQGVDqotZuvt";
+      console.log("metadata is being uploaded");
+      
+      await writeContract({
+       address: contractAddress,
+       abi: contractAbi,
+       functionName: "createNFT",
+       args: [BigInt(1),parseUnits(values.sellingPrice.toString(),'ether'),metadata.image,metaUpload,
+        [values.firstCollaborator as Address, values.secondCollaborator as Address],[BigInt(50),BigInt(50)]],
+     });
+    } catch (error) {
+      toast.error("Submit failed")
+    }
     console.log(values);
   }
+
+const uploadFileToPinata = async (file: File | null): Promise<string> => {
+  if (file== null) {
+    throw new Error("File is null");
+  }
+  const content = new Blob([await file.arrayBuffer()], { type: file.type });
+  const fileName = `${Date.now()}-${file.name}`;
+  const fileToUpload = new File([content], fileName, { type: file.type });
+  const upload = await pinata.upload.file(fileToUpload);
+  return upload.IpfsHash;
+};
+
+const uploadMetaDataToPinata = async (data:NFTMetadata) : Promise<string>=>{
+  const upload = await pinata.upload.json(data);
+  return upload.IpfsHash;
+}
   return (
     <Dialog open={modal} onOpenChange={setModal}>
       <DialogContent className="flex flex-col gap-0 rounded-[15px] px-[26px] pb-[50px] pt-[12px]">
