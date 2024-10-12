@@ -10,13 +10,13 @@ import { pinata } from "../config/pinata/config";
 import { useEffect, useState } from "react";
 import {NFTCardProps} from '../new-types'
 
-const NFTCard = ({ creator, pinataUrl, price, metaDataCid,tokenId }: NFTCardProps) => {
+const NFTCard = ({ creator,price, metaDataCid,tokenId }: NFTCardProps) => {
   const [desc, setDesc] = useState("")
   const [imageUrl, setImageUrl] = useState("")
   useEffect(() => {
     const get = async () => {
-      const data = await pinata.gateways.get(metaDataCid);
-      setDesc(data.data.description);
+      const data = await pinata.gateways.get(metaDataCid) as any;
+      setDesc(data?.data?.description);
       setImageUrl(data.data.image);
     };
     get();

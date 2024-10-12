@@ -1,5 +1,5 @@
 import { http, createConfig } from "wagmi";
-import { sepolia,baseSepolia } from "wagmi/chains";
+import { baseSepolia } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
 
 const config = createConfig({

@@ -10,7 +10,6 @@ import {
 } from "@/abi/CollaborativeNFTMarketplace";
 import { NFT } from "../../../../new-types";
 import { formatEther, parseUnits } from "ethers";
-import { useNFTDetails } from "../../../../lib/nftHook";
 import { useEffect, useState } from "react";
 import {
   useWaitForTransactionReceipt,
@@ -51,17 +50,11 @@ const NftItemPage = () => {
         });
         console.log(data);
         
-        let processedImageUrl = data[5];
-        // if (processedImageUrl.startsWith("ipfs://")) {
-        //   processedImageUrl = processedImageUrl.replace(
-        //     "ipfs://",
-        //     "https://gateway.pinata.cloud/ipfs/",
-        //   );
-        // }
-
+        const processedImageUrl = data[5];
+         
         setNftData(data as any);
         setPrice(formatEther(data[2]).toString());
-        let metadata=data[6];
+        //let metadata=data[6];
         setImageUrl(processedImageUrl);
       } catch (error) {
         console.error("Error fetching NFT data:", error);

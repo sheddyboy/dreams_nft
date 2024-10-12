@@ -19,12 +19,12 @@ export interface NFT {
   metadataCID: string; // IPFS Content identifier (CID)
   pinataUrl: string; // Full URL for accessing metadata on Pinata
   price: string; // Assuming price in Wei (1 Wei = 10^-18 ETH)
-  tokenId: Number;
+  tokenId: number;
 }
 export type NFTCardProps = {
   creator: string; // Ethereum address format (hexadecimal) // IPFS Content identifier (CID)
   pinataUrl: string; // Full URL for accessing metadata on Pinata
   price: string; // Assuming price in Wei (1 Wei = 10^-18 ETH)
   metaDataCid: string;
-  tokenId: Number
+  tokenId: number
 };

@@ -50,6 +50,7 @@ export default function Home() {
         <div className="grid grid-cols-4 gap-x-[13px] gap-y-[28px] max-md:grid-cols-2 max-sm:grid-cols-1 max-sm:gap-y-4">
           {result?.data?.map((item, index) => (
             <NFTCard
+               key={index}
               pinataUrl={item.pinataUrl}
               price={item.price.toString()}
               creator={item.creator}
