@@ -334,7 +334,7 @@ const CollaborationModal = ({ modal, setModal }: CollaborationModalProps) => {
                             <Input
                               min={0}
                               step={0.0001}
-                              className="no-arrows h-auto w-[4ch] rounded-none border-none p-0 text-end shadow-none focus-visible:ring-transparent"
+                              className="no-arrows h-auto w-[8ch] rounded-none border-none p-0 text-end shadow-none focus-visible:ring-transparent"
                               type="number"
                               {...field}
                               onChange={(e) =>
