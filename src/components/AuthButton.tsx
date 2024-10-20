@@ -1,15 +1,25 @@
 "use client";
 import { useConnect, useAccount, useDisconnect } from "wagmi";
 import { injected } from "wagmi/connectors";
-import { sepolia,baseSepolia } from "viem/chains";
+import { sepolia, baseSepolia } from "viem/chains";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import { checkAndAddToDb, getUser } from "@/actions/auth";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryClient } from "@/lib/reactQuery";
 const AuthButton = () => {
   const { connectAsync } = useConnect();
   const { disconnectAsync } = useDisconnect();
   const { isConnected, address } = useAccount();
+  const queryClient = getQueryClient();
+
+  const { data: userData } = useQuery({
+    queryKey: ["user", address],
+    queryFn: () => getUser({ wallet: address! }),
+    enabled: isConnected && !!address,
+  });
   return (
     <>
       {isConnected ? (
@@ -17,7 +27,7 @@ const AuthButton = () => {
           <div className="flex flex-1 items-stretch gap-[20px] overflow-hidden">
             <Avatar className="ml-[10px] h-[28px] w-[28px] font-outfit">
               <AvatarImage />
-              <Link href={`/user/1`}>
+              <Link href={`/user/${userData?.data?.wallet_address}`}>
                 <AvatarFallback>🐶</AvatarFallback>
               </Link>
             </Avatar>
@@ -55,10 +65,19 @@ const AuthButton = () => {
         <Button
           onClick={async () => {
             try {
-              await connectAsync({
+              const { accounts } = await connectAsync({
                 chainId: baseSepolia.id,
                 connector: injected(),
               });
+              console.log({ address });
+              const [wallet] = accounts;
+              const { data: checkAndAddToDbData, error: checkAndAddToDbError } =
+                await checkAndAddToDb({
+                  wallet,
+                });
+              if (checkAndAddToDbError) throw checkAndAddToDbError;
+              console.log({ checkAndAddToDbData });
+              queryClient.invalidateQueries({ queryKey: ["user", wallet] });
               return toast.success(`Logged In`);
             } catch (error) {
               console.log({ error });

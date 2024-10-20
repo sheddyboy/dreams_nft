@@ -1,0 +1,1 @@
+ALTER TABLE "users" ALTER COLUMN "bio" SET DEFAULT 'Let collaborate and i make the best out of your work.my name is mandikis Let collaborate and i make the best out of your work';

@@ -1,14 +1,34 @@
+"use client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AuthButton from "@/components/AuthButton";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { getUser } from "@/actions/auth";
+import { useAccount } from "wagmi";
+import { useEffect, useState } from "react";
+import CollaborationModal from "@/components/CollaborationModal";
 
 type UserPageLayoutProps = {
   children: React.ReactNode;
+  params: { id: string };
 };
 
-const UserPageLayout = ({ children }: UserPageLayoutProps) => {
+const UserPageLayout = ({ children, params: { id } }: UserPageLayoutProps) => {
+  const [modal, setModal] = useState(false);
+  const { address } = useAccount();
+  const { data: userData } = useQuery({
+    queryKey: ["user", id],
+    queryFn: () => getUser({ wallet: id }),
+  });
+  const [isCurrentUser, setIsCurrentUser] = useState(false);
+  useEffect(() => {
+    setIsCurrentUser(address === userData?.data?.wallet_address);
+  }, [address, userData?.data?.wallet_address]);
+  console.log({ address });
+  console.log({ userDataAddress: userData?.data?.wallet_address });
+  console.log(address === userData?.data?.wallet_address);
   return (
     <div className="flex flex-col gap-[25px] max-md:gap-0">
       <div className="flex aspect-[1280/202] bg-nav-gradient bg-cover bg-center max-md:aspect-auto">
@@ -41,18 +61,31 @@ const UserPageLayout = ({ children }: UserPageLayoutProps) => {
             <Card className="border-none">
               <CardContent className="overflow-hidden rounded-[8px] p-0 pb-[10px]">
                 <div className="mb-[15px] flex aspect-[272/257] items-end justify-center bg-[url('/dummy_images/nft_user.jpeg')] bg-cover bg-center max-md:aspect-[351/132]">
-                  <Button className="mb-[28px] h-auto rounded-[30px] px-[27.5px] py-[10px]">
+                  <Button
+                    onClick={() => {
+                      setModal(true);
+                    }}
+                    className="mb-[28px] h-auto rounded-[30px] px-[27.5px] py-[10px]"
+                  >
                     Collaborate
                   </Button>
                 </div>
                 <div className="flex flex-col gap-[15px] px-2">
-                  <h3 className="text-center text-[14px] font-medium leading-[17px] text-[#0DA3B4]">
-                    Open to Collaborations
-                  </h3>
+                  {isCurrentUser ? (
+                    <h3 className="text-center text-[14px] font-medium leading-[17px] text-[#0DA3B4]">
+                      Edit Bio
+                    </h3>
+                  ) : (
+                    <h3 className="text-center text-[14px] font-medium leading-[17px] text-[#0DA3B4]">
+                      Open to Collaborations
+                    </h3>
+                  )}
+
                   <p className="font-lato text-[14px] leading-[17px] text-black">
-                    Let collaborate and i make the best out of your work.my name
+                    {userData?.data?.bio ??
+                      `Let collaborate and i make the best out of your work.my name
                     is mandikis Let collaborate and i make the best out of your
-                    work.my name is mandikis
+                    work`}
                   </p>
                   <div className="flex flex-col gap-[10px]">
                     <div className="flex items-center justify-between">
@@ -98,6 +131,7 @@ const UserPageLayout = ({ children }: UserPageLayoutProps) => {
         </div>
         {children}
       </div>
+      <CollaborationModal modal={modal} setModal={setModal} />
     </div>
   );
 };
