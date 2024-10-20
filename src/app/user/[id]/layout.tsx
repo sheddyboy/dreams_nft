@@ -73,7 +73,7 @@ const UserPageLayout = ({ children, params: { id } }: UserPageLayoutProps) => {
                   </Button>
                 </div>
                 <div className="flex flex-col gap-[15px] px-2">
-                  {true ? (
+                  {isCurrentUser ? (
                     <h3
                       onClick={() => {
                         setModalBio(true);
