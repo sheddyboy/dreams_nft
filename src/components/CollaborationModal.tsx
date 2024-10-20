@@ -333,7 +333,7 @@ const CollaborationModal = ({ modal, setModal }: CollaborationModalProps) => {
                           <div className="flex items-center gap-1 text-[12px] font-semibold leading-[20px]">
                             <Input
                               min={0}
-                              step={0.01}
+                              step={0.0001}
                               className="no-arrows h-auto w-[4ch] rounded-none border-none p-0 text-end shadow-none focus-visible:ring-transparent"
                               type="number"
                               {...field}
