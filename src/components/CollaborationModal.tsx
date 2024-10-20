@@ -115,7 +115,7 @@ const CollaborationModal = ({ modal, setModal }: CollaborationModalProps) => {
       sellingPrice: 0,
       user: { percentage: 50 },
       numOfCollaborators: 1,
-      collaborators: [{ percentage: 50 }, { percentage: 0 }, { percentage: 0 }],
+      collaborators: [{ percentage: 50 }],
     },
   });
 
