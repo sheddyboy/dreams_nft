@@ -9,6 +9,7 @@ import { getUser } from "@/actions/auth";
 import { useAccount } from "wagmi";
 import { useEffect, useState } from "react";
 import CollaborationModal from "@/components/CollaborationModal";
+import BioModal from "@/components/BioModal";
 
 type UserPageLayoutProps = {
   children: React.ReactNode;
@@ -17,6 +18,7 @@ type UserPageLayoutProps = {
 
 const UserPageLayout = ({ children, params: { id } }: UserPageLayoutProps) => {
   const [modal, setModal] = useState(false);
+  const [modalBio, setModalBio] = useState(false);
   const { address } = useAccount();
   const { data: userData } = useQuery({
     queryKey: ["user", id],
@@ -71,8 +73,13 @@ const UserPageLayout = ({ children, params: { id } }: UserPageLayoutProps) => {
                   </Button>
                 </div>
                 <div className="flex flex-col gap-[15px] px-2">
-                  {isCurrentUser ? (
-                    <h3 className="text-center text-[14px] font-medium leading-[17px] text-[#0DA3B4]">
+                  {true ? (
+                    <h3
+                      onClick={() => {
+                        setModalBio(true);
+                      }}
+                      className="cursor-pointer text-center text-[14px] font-medium leading-[17px] text-[#0DA3B4]"
+                    >
                       Edit Bio
                     </h3>
                   ) : (
@@ -93,7 +100,7 @@ const UserPageLayout = ({ children, params: { id } }: UserPageLayoutProps) => {
                         Total NFT
                       </span>
                       <span className="font-lato text-[12px] leading-[14px] text-black">
-                        54
+                        0
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -101,7 +108,7 @@ const UserPageLayout = ({ children, params: { id } }: UserPageLayoutProps) => {
                         No of collaborators
                       </span>
                       <span className="font-lato text-[12px] leading-[14px] text-black">
-                        54
+                        0
                       </span>
                     </div>
                   </div>
@@ -110,21 +117,17 @@ const UserPageLayout = ({ children, params: { id } }: UserPageLayoutProps) => {
             </Card>
             <div className="flex flex-col gap-1">
               <span className="text-[12px] font-semibold leading-[16px] text-[#606778]">
-                Mskdeodp’s style
+                {`${userData?.data?.name} styles`}
               </span>
               <div className="flex flex-wrap items-center gap-[10px]">
-                <Badge className="rounded-[30px] bg-[#F1F1F1] text-[14px] font-semibold leading-[17px] text-[#7B7B7B] hover:bg-[#F1F1F1]">
-                  Music
-                </Badge>
-                <Badge className="rounded-[30px] bg-[#F1F1F1] text-[14px] font-semibold leading-[17px] text-[#7B7B7B] hover:bg-[#F1F1F1]">
-                  Adobe Illustrator
-                </Badge>
-                <Badge className="rounded-[30px] bg-[#F1F1F1] text-[14px] font-semibold leading-[17px] text-[#7B7B7B] hover:bg-[#F1F1F1]">
-                  Mosaic
-                </Badge>
-                <Badge className="rounded-[30px] bg-[#F1F1F1] text-[14px] font-semibold leading-[17px] text-[#7B7B7B] hover:bg-[#F1F1F1]">
-                  Mosaic
-                </Badge>
+                {userData?.data?.styles.map((style, index) => (
+                  <Badge
+                    key={index}
+                    className="rounded-[30px] bg-[#F1F1F1] text-[14px] font-semibold leading-[17px] text-[#7B7B7B] hover:bg-[#F1F1F1]"
+                  >
+                    {style}
+                  </Badge>
+                ))}
               </div>
             </div>
           </div>
@@ -132,6 +135,7 @@ const UserPageLayout = ({ children, params: { id } }: UserPageLayoutProps) => {
         {children}
       </div>
       <CollaborationModal modal={modal} setModal={setModal} />
+      <BioModal modal={modalBio} setModal={setModalBio} />
     </div>
   );
 };

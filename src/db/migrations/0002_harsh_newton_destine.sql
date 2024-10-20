@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "styles" text[] DEFAULT '{}'::text[] NOT NULL;

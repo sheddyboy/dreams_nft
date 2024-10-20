@@ -36,3 +36,26 @@ export async function getUser({ wallet }: { wallet: string }) {
     return errorObject(error);
   }
 }
+export async function updateUser({
+  wallet,
+  bio,
+  name,
+  styles,
+  type,
+}: {
+  wallet: string;
+  name: string;
+  bio: string;
+  type: string;
+  styles: string[];
+}) {
+  try {
+    await db
+      .update(usersTable)
+      .set({ bio, name, styles, artist_type: type })
+      .where(eq(usersTable.wallet_address, wallet));
+    return dataObject(true);
+  } catch (error) {
+    return errorObject(error);
+  }
+}

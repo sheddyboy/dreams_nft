@@ -15,6 +15,20 @@
       "when": 1729416152007,
       "tag": "0001_solid_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1729430850802,
+      "tag": "0002_harsh_newton_destine",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1729432443559,
+      "tag": "0003_big_nuke",
+      "breakpoints": true
     }
   ]
 }
